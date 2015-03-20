@@ -13,43 +13,49 @@ module.exports = function (grunt) {
         },
 
         // publish your kevlib.json model to the Kevoree Registry
-        kevoree_registry: { src: 'kevlib.json' }
+        kevoree_registry: { src: 'kevlib.json' },
 
-        //browserify: {
-        //    main: {
-        //        src: '<%= pkg.main %>',
-        //        dest: 'browser/<%= pkg.name %>.js',
-        //        options: {
-        //            alias: ['<%= pkg.main %>:<%= pkg.name %>'],
-        //            external: [
-        //                'kevoree-library',
-        //                'kevoree-kotlin'
-        //            ]
-        //        }
-        //    }
-        //},
-        //
-        //uglify: {
-        //    options: {
-        //        banner: '// Browserify bundle of <%= pkg.name %>@<%= pkg.version %> - Generated on <%= getDate() %>\n',
-        //        mangle: {
-        //            except: ['_super']
-        //        }
-        //    },
-        //    bundle: {
-        //        src: '<%= browserify.main.dest %>',
-        //        dest: '<%= browserify.main.dest %>'
-        //    }
-        //},
-        //getDate: function () {
-        //    var d = new Date();
-        //    return d.toISOString().split('T')[0] + ' ' + d.toLocaleTimeString();
-        //}
+        browserify: {
+            standalone: {
+                options: {
+                    browserifyOptions: {
+                        standalone: 'KevoreeNodeJavascript'
+                    }
+                },
+                src: ['<%= pkg.main %>'],
+                dest: 'browser/<%= pkg.name %>.js'
+            },
+            require: {
+                options: {
+                    alias: [ '<%= pkg.main %>:<%= pkg.name %>' ],
+                    external: ['kevoree-model']
+                },
+                src: [],
+                dest: 'browser/<%= pkg.name %>.require.js'
+            }
+        },
+
+        uglify: {
+            options: {
+                banner: '// Browserify bundle of <%= pkg.name %>@<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd HH:MM") %>\n',
+                mangle: {
+                    except: ['_super']
+                }
+            },
+            standalone: {
+                src: '<%= browserify.standalone.dest %>',
+                dest: 'browser/<%= pkg.name %>.min.js'
+            },
+            require: {
+                src: '<%= browserify.require.dest %>',
+                dest: 'browser/<%= pkg.name %>.require.min.js'
+            }
+        }
     });
 
     grunt.loadNpmTasks('grunt-kevoree');
-    //grunt.loadNpmTasks('grunt-browserify');
-    //grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-kevoree-genmodel');
     grunt.loadNpmTasks('grunt-kevoree-registry');
 
@@ -57,4 +63,5 @@ module.exports = function (grunt) {
     grunt.registerTask('build', ['kevoree_genmodel']);
     grunt.registerTask('publish', ['kevoree_registry']);
     grunt.registerTask('kev', ['kevoree']);
+    grunt.registerTask('browser', ['browserify', 'uglify']);
 };
