@@ -16,22 +16,12 @@ module.exports = function (grunt) {
         kevoree_registry: { src: 'kevlib.json' },
 
         browserify: {
-            standalone: {
+            browser: {
                 options: {
-                    browserifyOptions: {
-                        standalone: 'KevoreeNodeJavascript'
-                    }
-                },
-                src: ['<%= pkg.main %>'],
-                dest: 'browser/<%= pkg.name %>.js'
-            },
-            require: {
-                options: {
-                    alias: [ '<%= pkg.main %>:<%= pkg.name %>' ],
-                    external: ['kevoree-model']
+                    alias: [ '<%= pkg.main %>:<%= pkg.name %>' ]
                 },
                 src: [],
-                dest: 'browser/<%= pkg.name %>.require.js'
+                dest: 'browser/<%= pkg.name %>.js'
             }
         },
 
@@ -42,13 +32,9 @@ module.exports = function (grunt) {
                     except: ['_super']
                 }
             },
-            standalone: {
-                src: '<%= browserify.standalone.dest %>',
+            browser: {
+                src: '<%= browserify.browser.dest %>',
                 dest: 'browser/<%= pkg.name %>.min.js'
-            },
-            require: {
-                src: '<%= browserify.require.dest %>',
-                dest: 'browser/<%= pkg.name %>.require.min.js'
             }
         }
     });
