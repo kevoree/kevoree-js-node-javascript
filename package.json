@@ -1,6 +1,6 @@
 {
   "name": "kevoree-node-javascript",
-  "version": "5.0.4",
+  "version": "5.0.5",
   "main": "./lib/JavascriptNode.js",
   "kevoree": {
     "package": "org.kevoree.library"
