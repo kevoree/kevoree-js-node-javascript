@@ -50,7 +50,6 @@ var AdaptationEngine = Class({
     construct: function (node) {
         this.node = node;
         this.modelObjMapper = new ModelObjectMapper();
-        this.modelObjMapper.addEntry(this.node.getPath(), this.node);
         var factory = new kevoree.factory.DefaultKevoreeFactory();
         this.compare = factory.createModelCompare();
         this.alreadyProcessedTraces = {};
@@ -67,8 +66,6 @@ var AdaptationEngine = Class({
     processTraces: function (diffSeq, targetModel) {
         this.targetModel = targetModel;
         var cmdList = [];
-        // reset traces map
-        this.alreadyProcessedTraces = {};
 
         // know if a trace has already been added to cmdList for {path <-> AdaptationPrimitive}
         var traceAlreadyProcessed = function (cmd) {
@@ -109,6 +106,10 @@ var AdaptationEngine = Class({
                 }
             }
         }
+
+        // free-up some mem
+        this.targetModel = null;
+        this.alreadyProcessedTraces = {};
 
         ////return sorted command list (sort by COMMAND_RANK in order to process adaptations properly)
         //cmds = this.sortCommands(cmdList);
@@ -503,14 +504,13 @@ var ModelObjectMapper = Class({
 module.exports = ModelObjectMapper;
 },{"pseudoclass":125}],3:[function(require,module,exports){
 var AdaptationPrimitive = require('kevoree-entities').AdaptationPrimitive,
-    Port                = require('kevoree-entities').Port;
+    Port                = require('kevoree-entities').Port,
+    RemoveBinding       = require('./RemoveBinding');
 
 module.exports = AdaptationPrimitive.extend({
     toString: 'AddBinding',
 
     execute: function (callback) {
-        this._super(callback);
-
         var bindings, binding;
 
         var chanInstance = this.mapper.getObject(this.modelElement.hub.path()),
@@ -579,15 +579,13 @@ module.exports = AdaptationPrimitive.extend({
     },
 
     undo: function (callback) {
-        this._super(callback);
-
-        var RemoveBinding = require('./RemoveBinding');
         var cmd = new RemoveBinding(this.node, this.mapper, this.adaptModel, this.modelElement);
         cmd.execute(callback);
     }
 });
 },{"./RemoveBinding":7,"kevoree-entities":58}],4:[function(require,module,exports){
 var AdaptationPrimitive = require('kevoree-entities').AdaptationPrimitive;
+var RemoveDeployUnit = require('./RemoveDeployUnit');
 
 /**
  * AddDeployUnit Adaptation command
@@ -602,35 +600,33 @@ module.exports = AdaptationPrimitive.extend({
      * @param callback function: if this function first parameter != null it means that there is an error
      */
     execute: function (callback) {
-        this._super(callback);
-
         if (!this.mapper.hasObject(this.modelElement.path())) {
             var bootstrapper = this.node.getKevoreeCore().getBootstrapper();
 
             bootstrapper.bootstrap(this.modelElement, false, function (err) {
-                if (err) return callback(err);
-
-                // bootstrap success: add deployUnit path & packageName into mapper
-                this.log.debug(this.toString(), this.modelElement.path());
-                this.mapper.addEntry(this.modelElement.path(), this.modelElement.name);
-                return callback();
+                if (err) {
+                    callback(err);
+                } else {
+                    // bootstrap success: add deployUnit path & packageName into mapper
+                    this.log.debug(this.toString(), this.modelElement.path());
+                    this.mapper.addEntry(this.modelElement.path(), this.modelElement.name);
+                    callback();
+                }
             }.bind(this));
         } else {
             // this deploy unit is already installed, move on
-            return callback();
+            callback();
         }
     },
 
     undo: function (callback) {
-        this._super(callback);
-
-        var RemoveDeployUnit = require('./RemoveDeployUnit');
         var cmd = new RemoveDeployUnit(this.node, this.mapper, this.adaptModel, this.modelElement);
         cmd.execute(callback);
     }
 });
 },{"./RemoveDeployUnit":8,"kevoree-entities":58}],5:[function(require,module,exports){
 var AdaptationPrimitive = require('kevoree-entities').AdaptationPrimitive;
+var RemoveInstance = require('./RemoveInstance');
 
 /**
  * AddInstance Adaptation command
@@ -645,8 +641,6 @@ module.exports = AdaptationPrimitive.extend({
      * @param callback function: if this function first parameter != null it means that there is an error
      */
     execute: function (callback) {
-        this._super(callback);
-
         // inception check
         if (this.modelElement && (this.modelElement.name !== this.node.getName())) {
             // platform related check
@@ -684,26 +678,23 @@ module.exports = AdaptationPrimitive.extend({
     },
 
     undo: function (callback) {
-        this._super(callback);
-
-        var RemoveInstance = require('./RemoveInstance');
         var cmd = new RemoveInstance(this.node, this.mapper, this.adaptModel, this.modelElement);
         cmd.execute(callback);
     }
 });
 },{"./RemoveInstance":9,"kevoree-entities":58}],6:[function(require,module,exports){
-// Created by leiko on 26/01/15 17:30
 var AdaptationPrimitive = require('kevoree-entities').AdaptationPrimitive;
 
 var HaraKiri = AdaptationPrimitive.extend({
     toString: 'HaraKiri',
 
     execute: function (callback) {
-        this.log.warn(this.toString(), 'Hara-kiri requested. This runtime is going to be shutdown.');
         var kCore = this.node.getKevoreeCore();
-        kCore.once('deployed', function deployed() {
-            kCore.off('deployed', deployed);
-            kCore.stop();
+        this.log.debug(this.toString(), 'Hara-kiri requested: shutting down this runtime...(core stopping: '+kCore.stopping+')');
+        kCore.once('deployed', function () {
+            if (!kCore.stopping) {
+                kCore.stop();
+            }
         }.bind(this));
         callback();
     },
@@ -714,15 +705,15 @@ var HaraKiri = AdaptationPrimitive.extend({
 });
 
 module.exports = HaraKiri;
+
 },{"kevoree-entities":58}],7:[function(require,module,exports){
 var AdaptationPrimitive = require('kevoree-entities').AdaptationPrimitive;
+var AddBinding = require('./AddBinding');
 
 module.exports = AdaptationPrimitive.extend({
     toString: 'RemoveBinding',
 
     execute: function (callback) {
-        this._super(callback);
-
         var chanInstance = this.mapper.getObject(this.modelElement.hub.path()),
             compInstance = this.mapper.getObject(this.modelElement.port.eContainer().path()),
             portInstance = this.mapper.getObject(this.modelElement.port.path());
@@ -761,9 +752,6 @@ module.exports = AdaptationPrimitive.extend({
     },
 
     undo: function (callback) {
-        this._super(callback);
-
-        var AddBinding = require('./AddBinding');
         var cmd = new AddBinding(this.node, this.mapper, this.adaptModel, this.modelElement);
         cmd.execute(callback);
     },
@@ -791,6 +779,7 @@ module.exports = AdaptationPrimitive.extend({
 });
 },{"./AddBinding":3,"kevoree-entities":58}],8:[function(require,module,exports){
 var AdaptationPrimitive = require('kevoree-entities').AdaptationPrimitive;
+var AddDeployUnit = require('./AddDeployUnit');
 
 /**
  * RemoveDeployUnit Adaptation
@@ -801,11 +790,9 @@ module.exports = AdaptationPrimitive.extend({
     toString: 'RemoveDeployUnit',
 
     execute: function (callback) {
-        this._super(callback);
-
         if (this.modelElement) {
             var bootstrapper = this.node.getKevoreeCore().getBootstrapper();
-            return bootstrapper.uninstall(this.modelElement, function (err) {
+            bootstrapper.uninstall(this.modelElement, function (err) {
                 if (err) {
                     return callback(err);
                 }
@@ -814,22 +801,20 @@ module.exports = AdaptationPrimitive.extend({
                 this.mapper.removeEntry(this.modelElement.path());
                 callback();
             }.bind(this));
+        } else {
+            callback();
         }
-
-        return callback();
     },
 
     undo: function (callback) {
-        this._super(callback);
-
-        var AddDeployUnit = require('./AddDeployUnit');
         var cmd = new AddDeployUnit(this.node, this.mapper, this.adaptModel, this.modelElement);
         cmd.execute(callback);
     }
 });
 },{"./AddDeployUnit":4,"kevoree-entities":58}],9:[function(require,module,exports){
 var AdaptationPrimitive = require('kevoree-entities').AdaptationPrimitive,
-    timesUp             = require('times-up');
+    timesUp             = require('times-up'),
+    AddInstance         = require('./AddInstance');
 
 /**
  * RemoveInstance Adaptation command
@@ -844,8 +829,6 @@ module.exports = AdaptationPrimitive.extend({
      * @param callback function: if this function first parameter != null it means that there is an error
      */
     execute: function (callback) {
-        this._super(callback);
-
         if (this.modelElement.host && this.modelElement.host.name === this.node.getName()) {
             // this element is a subNode to this.node
             this.node.removeSubNode(this.modelElement, timesUp(this.node.getName() + '.removeSubNode(...)', 30000, function (err) {
@@ -867,15 +850,10 @@ module.exports = AdaptationPrimitive.extend({
                 return;
             }
         }
-
-        this.log.warn(this.toString(), 'Nothing performed...shouldnt see that');
         callback();
     },
 
     undo: function (callback) {
-        this._super(callback);
-
-        var AddInstance = require('./AddInstance');
         var cmd = new AddInstance(this.node, this.mapper, this.adaptModel, this.modelElement);
         cmd.execute(callback);
     }
@@ -883,13 +861,12 @@ module.exports = AdaptationPrimitive.extend({
 },{"./AddInstance":5,"kevoree-entities":58,"times-up":126}],10:[function(require,module,exports){
 var AdaptationPrimitive = require('kevoree-entities').AdaptationPrimitive;
 var timesUp             = require('times-up');
+var StopInstance = require('./StopInstance');
 
 var StartInstance = AdaptationPrimitive.extend({
     toString: 'StartInstance',
 
     execute: function (callback) {
-        this._super(callback);
-
         if (this.modelElement.host && this.modelElement.host.name === this.node.getName()) {
             // this element is a subNode to this.node
             this.node.startSubNode(this.modelElement, timesUp(this.node.getName() + '.startSubNode(...)', 30000, function (err) {
@@ -951,9 +928,6 @@ var StartInstance = AdaptationPrimitive.extend({
     },
 
     undo: function (callback) {
-        this._super(callback);
-
-        var StopInstance = require('./StopInstance');
         var cmd = new StopInstance(this.node, this.mapper, this.adaptModel, this.modelElement);
         cmd.execute(callback);
     }
@@ -963,13 +937,12 @@ module.exports = StartInstance;
 },{"./StopInstance":11,"kevoree-entities":58,"times-up":126}],11:[function(require,module,exports){
 var AdaptationPrimitive = require('kevoree-entities').AdaptationPrimitive;
 var timesUp = require('times-up');
+var StartInstance = require('./StartInstance');
 
 var StopInstance = AdaptationPrimitive.extend({
     toString: 'StopInstance',
 
     execute: function (callback) {
-        this._super(callback);
-
         if (this.modelElement.host && this.modelElement.host.name === this.node.getName()) {
             // this element is a subNode to this.node
             this.node.stopSubNode(this.modelElement, timesUp(this.node.getName() + '.stopSubNode(...)', 30000, function (err) {
@@ -1005,9 +978,6 @@ var StopInstance = AdaptationPrimitive.extend({
     },
 
     undo: function (callback) {
-        this._super(callback);
-
-        var StartInstance = require('./StartInstance');
         var cmd = new StartInstance(this.node, this.mapper, this.adaptModel, this.modelElement);
         cmd.execute(callback);
     }
@@ -1028,8 +998,6 @@ module.exports = AdaptationPrimitive.extend({
     },
 
     execute: function (callback) {
-        this._super(callback);
-
         var kDictionary = this.modelElement.eContainer();
         var instance;
         if (kDictionary.eContainer().name === this.node.getName()) {
@@ -1061,12 +1029,9 @@ module.exports = AdaptationPrimitive.extend({
     },
 
     undo: function (callback) {
-        this._super(callback);
-
         if (this.instance != null && this.oldDictionaryMap != null) {
             this.instance.getDictionary().setMap(this.oldDictionaryMap);
         }
-
         callback();
     }
 });
@@ -1081,8 +1046,6 @@ module.exports = AdaptationPrimitive.extend({
     toString: 'UpdateInstance',
 
     execute: function (callback) {
-        this._super(callback);
-
         var instance;
         if (this.modelElement.name === this.node.getName()) {
             instance = this.node;
@@ -1105,7 +1068,6 @@ module.exports = AdaptationPrimitive.extend({
     },
 
     undo: function (callback) {
-        this._super(callback);
         callback();
     }
 });
@@ -2255,7 +2217,6 @@ exports.SlowBuffer = SlowBuffer
 exports.INSPECT_MAX_BYTES = 50
 Buffer.poolSize = 8192 // not used by this implementation
 
-var kMaxLength = 0x3fffffff
 var rootParent = {}
 
 /**
@@ -2281,17 +2242,26 @@ var rootParent = {}
  * get the Object implementation, which is slower but will work correctly.
  */
 Buffer.TYPED_ARRAY_SUPPORT = (function () {
+  function Foo () {}
   try {
     var buf = new ArrayBuffer(0)
     var arr = new Uint8Array(buf)
     arr.foo = function () { return 42 }
+    arr.constructor = Foo
     return arr.foo() === 42 && // typed array instances can be augmented
+        arr.constructor === Foo && // constructor can be set
         typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
         new Uint8Array(1).subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
   } catch (e) {
     return false
   }
 })()
+
+function kMaxLength () {
+  return Buffer.TYPED_ARRAY_SUPPORT
+    ? 0x7fffffff
+    : 0x3fffffff
+}
 
 /**
  * Class: Buffer
@@ -2443,9 +2413,9 @@ function allocate (that, length) {
 function checked (length) {
   // Note: cannot use `length < kMaxLength` here because that fails when
   // length is NaN (which is otherwise coerced to zero.)
-  if (length >= kMaxLength) {
+  if (length >= kMaxLength()) {
     throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
-                         'size: 0x' + kMaxLength.toString(16) + ' bytes')
+                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
   }
   return length | 0
 }
@@ -2537,29 +2507,38 @@ Buffer.concat = function concat (list, length) {
 }
 
 function byteLength (string, encoding) {
-  if (typeof string !== 'string') string = String(string)
+  if (typeof string !== 'string') string = '' + string
 
-  if (string.length === 0) return 0
+  var len = string.length
+  if (len === 0) return 0
 
-  switch (encoding || 'utf8') {
-    case 'ascii':
-    case 'binary':
-    case 'raw':
-      return string.length
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      return string.length * 2
-    case 'hex':
-      return string.length >>> 1
-    case 'utf8':
-    case 'utf-8':
-      return utf8ToBytes(string).length
-    case 'base64':
-      return base64ToBytes(string).length
-    default:
-      return string.length
+  // Use a for loop to avoid recursion
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'ascii':
+      case 'binary':
+      // Deprecated
+      case 'raw':
+      case 'raws':
+        return len
+      case 'utf8':
+      case 'utf-8':
+        return utf8ToBytes(string).length
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return len * 2
+      case 'hex':
+        return len >>> 1
+      case 'base64':
+        return base64ToBytes(string).length
+      default:
+        if (loweredCase) return utf8ToBytes(string).length // assume utf8
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
   }
 }
 Buffer.byteLength = byteLength
@@ -2568,8 +2547,7 @@ Buffer.byteLength = byteLength
 Buffer.prototype.length = undefined
 Buffer.prototype.parent = undefined
 
-// toString(encoding, start=0, end=buffer.length)
-Buffer.prototype.toString = function toString (encoding, start, end) {
+function slowToString (encoding, start, end) {
   var loweredCase = false
 
   start = start | 0
@@ -2610,6 +2588,13 @@ Buffer.prototype.toString = function toString (encoding, start, end) {
         loweredCase = true
     }
   }
+}
+
+Buffer.prototype.toString = function toString () {
+  var length = this.length | 0
+  if (length === 0) return ''
+  if (arguments.length === 0) return utf8Slice(this, 0, length)
+  return slowToString.apply(this, arguments)
 }
 
 Buffer.prototype.equals = function equals (b) {
@@ -9868,7 +9853,7 @@ var AbstractChannel = KevoreeEntity.extend({
         }
 
         if (this.started) {
-            this.onSend(outputPath, paths, msg, callback);
+            this.onSend(outputPath, paths, msg+'', callback);
         }
     },
 
@@ -9986,6 +9971,7 @@ var AbstractChannel = KevoreeEntity.extend({
 });
 
 module.exports = AbstractChannel;
+
 },{"./KevoreeEntity":66}],60:[function(require,module,exports){
 var KevoreeEntity = require('./KevoreeEntity'),
     Port          = require('./Port'),
@@ -10030,7 +10016,7 @@ var AbstractComponent = KevoreeEntity.extend({
 
     addInternalOutputPort: function (port) {
         this[AbstractComponent.OUT_PORT+port.getName()] = function (msg, callback) {
-            port.processSend(msg, callback);
+            port.processSend(msg+'', callback);
         };
     },
 
@@ -10075,6 +10061,7 @@ AbstractComponent.IN_PORT = 'in_';
 AbstractComponent.OUT_PORT = 'out_';
 
 module.exports = AbstractComponent;
+
 },{"./KevoreeEntity":66,"./KevoreeUI":67,"./Port":68}],61:[function(require,module,exports){
 var KevoreeEntity = require('./KevoreeEntity');
 
@@ -57271,6 +57258,7 @@ var JavascriptNode = AbstractNode.extend({
     },
 
     start: function (done) {
+        this.adaptationEngine.modelObjMapper.addEntry(this.getPath(), this);
         this.dictionary.on('logLevel', this.updateLogLevel);
         this.updateLogLevel();
         done();

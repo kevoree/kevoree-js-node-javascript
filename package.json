@@ -1,6 +1,6 @@
 {
   "name": "kevoree-node-javascript",
-  "version": "5.0.6",
+  "version": "5.2.0",
   "main": "./lib/JavascriptNode.js",
   "kevoree": {
     "package": "org.kevoree.library"
@@ -27,13 +27,13 @@
     "url": "https://github.com/kevoree/kevoree-js-node-javascript"
   },
   "dependencies": {
-    "async": "^0.9.0",
-    "kevoree-commons": "^2.1.0",
-    "kevoree-entities": "^8.0.0",
-    "kevoree-kotlin": "^1.0.2",
-    "kevoree-library": "^5.0.4",
+    "async": "^0.9.2",
+    "kevoree-commons": "^2.1.2",
+    "kevoree-entities": "^8.0.5",
+    "kevoree-kotlin": "^1.0.3",
+    "kevoree-library": "^5.0.9",
     "pseudoclass": "^1.0.2",
-    "times-up": "^1.0.0"
+    "times-up": "^1.0.1"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

@@ -8,7 +8,10 @@ module.exports = function (grunt) {
         // by parsing your pkg.main entry point
         kevoree_genmodel: {
             main: {
-                options: { verbose: true }
+                options: {
+                    quiet: false,
+                    verbose: true
+                }
             }
         },
 
@@ -39,14 +42,30 @@ module.exports = function (grunt) {
     });
 
     grunt.loadNpmTasks('grunt-kevoree');
-    grunt.loadNpmTasks('grunt-browserify');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-kevoree-genmodel');
     grunt.loadNpmTasks('grunt-kevoree-registry');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-browserify');
 
     grunt.registerTask('default', 'build');
-    grunt.registerTask('build', ['kevoree_genmodel', 'browser']);
-    grunt.registerTask('publish', ['kevoree_registry']);
+    grunt.registerTask('build', 'Build Kevoree module', function () {
+        if (process.env.KEVOREE_RUNTIME !== 'dev') {
+            grunt.tasks([
+                'kevoree_genmodel',
+                'browser'
+            ]);
+        }
+    });
+    grunt.registerTask('build:dev', 'Build Kevoree module in dev mode', function () {
+        if (process.env.KEVOREE_RUNTIME !== 'dev') {
+            grunt.tasks([
+                'kevoree_genmodel',
+                'browser:dev'
+            ]);
+        }
+    });
+    grunt.registerTask('publish', 'kevoree_registry');
     grunt.registerTask('kev', ['kevoree']);
     grunt.registerTask('browser', ['browserify', 'uglify']);
+    grunt.registerTask('browser:dev', 'browserify');
 };
