@@ -15,6 +15,12 @@ module.exports = function (grunt) {
             }
         },
 
+        kevoree: {
+            options: {
+                browserDevMode: true
+            }
+        },
+
         // publish your kevlib.json model to the Kevoree Registry
         kevoree_registry: { src: 'kevlib.json' },
 
