@@ -31,4 +31,5 @@ node_modules
 .idea
 
 # Kevoree JS
+browser/kevoree-node-javascript*.js
 kevlib.json
