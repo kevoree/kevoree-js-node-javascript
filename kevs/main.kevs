@@ -1,5 +1,5 @@
 add node0 : JavascriptNode
-add sync : WSGroup
+add sync : WSGroup/5.3.2-SNAPSHOT
 
 set sync.master = 'node0'
 
