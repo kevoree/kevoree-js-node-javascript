@@ -1,4 +1,4 @@
-add node0 : JavascriptNode/5.3.3
+add node0 : JavascriptNode
 add sync : WSGroup
 
 set sync.master = 'node0'
