@@ -34,7 +34,7 @@ module.exports = function (grunt) {
           external: ['kevoree-library'],
           alias: ['<%= pkg.main %>:<%= pkg.name %>']
         },
-        src: [],
+        src: '<%= pkg.main %>',
         dest: 'browser/<%= pkg.name %>.js'
       }
     },
