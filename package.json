@@ -1,6 +1,6 @@
 {
   "name": "kevoree-node-javascript",
-  "version": "5.4.0-alpha.0",
+  "version": "5.4.0-alpha.1",
   "main": "./lib/JavascriptNode.js",
   "kevoree": {
     "namespace": "kevoree"
@@ -29,7 +29,7 @@
   "dependencies": {
     "async": "^1.5.2",
     "kevoree-commons": "next",
-    "kevoree-entities": "next",
+    "kevoree-entities": "^9.0.0-alpha.0",
     "kevoree-library": "next",
     "times-up": "^1.0.1"
   },
@@ -40,7 +40,7 @@
     "grunt-contrib-uglify": "^2.0.0",
     "grunt-kevoree": "^5.2.2",
     "grunt-kevoree-genmodel": "^3.0.0",
-    "grunt-kevoree-registry": "^3.0.0",
+    "grunt-kevoree-registry": "^3.0.1",
     "mocha": "^2.5.3"
   },
   "optionalDependencies": {},
