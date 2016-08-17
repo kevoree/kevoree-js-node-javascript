@@ -1,5 +1,5 @@
-add node0 : JavascriptNode
-add sync : WSGroup
+add node0 : JavascriptNode/LATEST/LATEST
+add sync : WSGroup/LATEST/LATEST
 
 set sync.master = 'node0'
 

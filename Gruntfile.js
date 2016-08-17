@@ -18,8 +18,11 @@ module.exports = function (grunt) {
     },
 
     kevoree: {
-      options: {
-        browserDevMode: false
+      main: {
+        options: {
+          runtime: 'next',
+          browserDevMode: false
+        }
       }
     },
 

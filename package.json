@@ -1,6 +1,6 @@
 {
   "name": "kevoree-node-javascript",
-  "version": "5.4.0-alpha.1",
+  "version": "5.4.0-alpha.2",
   "main": "./lib/JavascriptNode.js",
   "kevoree": {
     "namespace": "kevoree"
@@ -38,7 +38,7 @@
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-uglify": "^2.0.0",
-    "grunt-kevoree": "^5.2.2",
+    "grunt-kevoree": "next",
     "grunt-kevoree-genmodel": "^3.0.0",
     "grunt-kevoree-registry": "^3.0.1",
     "mocha": "^2.5.3"
