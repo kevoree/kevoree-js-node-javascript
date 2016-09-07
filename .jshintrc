@@ -17,5 +17,7 @@
   "trailing": true,
   "smarttabs": true,
   "mocha": true,
-  "globals": {}
+  "globals": {
+    "SystemJS": true
+  }
 }
