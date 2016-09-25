@@ -32,5 +32,4 @@ node_modules
 
 # Kevoree JS
 browser/kevoree-node-javascript*.js
-browser/test.js
 kevlib.json

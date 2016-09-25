@@ -18,6 +18,6 @@
   "smarttabs": true,
   "mocha": true,
   "globals": {
-    "SystemJS": true
+    "KevoreeModuleLoader": true
   }
 }

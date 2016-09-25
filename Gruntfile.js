@@ -1,5 +1,7 @@
 'use strict';
 
+var webpackConfig = require('./webpack.config');
+
 module.exports = function (grunt) {
 
   grunt.initConfig({
@@ -31,55 +33,19 @@ module.exports = function (grunt) {
       src: 'kevlib.json'
     },
 
-    browserify: {
-      browser: {
-        options: {
-          external: ['kevoree-library'],
-          alias: ['<%= pkg.main %>:<%= pkg.name %>']
-        },
-        src: '<%= pkg.main %>',
-        dest: 'browser/<%= pkg.name %>.js'
-      }
-    },
-
-    uglify: {
-      options: {
-        mangle: {
-          except: ['_super']
-        }
-      },
-      browser: {
-        src: '<%= browserify.browser.dest %>',
-        dest: 'browser/<%= pkg.name %>.min.js'
-      }
+    webpack: {
+      main: webpackConfig
     }
   });
 
   grunt.loadNpmTasks('grunt-kevoree');
   grunt.loadNpmTasks('grunt-kevoree-genmodel');
   grunt.loadNpmTasks('grunt-kevoree-registry');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-webpack');
 
   grunt.registerTask('default', 'build');
-  grunt.registerTask('build', 'Build Kevoree module', function () {
-    if (process.env.KEVOREE_RUNTIME !== 'dev') {
-      grunt.tasks([
-                'kevoree_genmodel',
-                'browser'
-            ]);
-    }
-  });
-  grunt.registerTask('build:dev', 'Build Kevoree module in dev mode', function () {
-    if (process.env.KEVOREE_RUNTIME !== 'dev') {
-      grunt.tasks([
-                'kevoree_genmodel',
-                'browser:dev'
-            ]);
-    }
-  });
-  grunt.registerTask('publish', ['kevoree_genmodel', 'kevoree_registry']);
+  grunt.registerTask('build', ['kevoree_genmodel', 'browser']);
+  grunt.registerTask('browser', 'webpack');
   grunt.registerTask('kev', ['kevoree_genmodel', 'kevoree']);
-  grunt.registerTask('browser', ['browserify', 'uglify']);
-  grunt.registerTask('browser:dev', 'browserify');
+  grunt.registerTask('publish', ['kevoree_genmodel', 'kevoree_registry']);
 };
