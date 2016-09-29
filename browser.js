@@ -1,3 +1,5 @@
+/* globals KevoreeModuleLoader */
+
 var pkg = require('./package.json');
 var JavascriptNode = require('./lib/JavascriptNode');
 

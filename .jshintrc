@@ -1,6 +1,5 @@
 {
   "node": true,
-  "browser": true,
   "esnext": true,
   "bitwise": true,
   "curly": true,
@@ -17,7 +16,5 @@
   "trailing": true,
   "smarttabs": true,
   "mocha": true,
-  "globals": {
-    "KevoreeModuleLoader": true
-  }
+  "globals": {}
 }
