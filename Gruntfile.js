@@ -12,18 +12,14 @@ module.exports = function (grunt) {
     // by parsing your pkg.main entry point
     kevoree_genmodel: {
       main: {
-        options: {
-          quiet: false,
-          verbose: true
-        }
+        options: {}
       }
     },
 
     kevoree: {
       main: {
         options: {
-          runtime: 'next',
-          browserDevMode: false
+          runtime: 'next'
         }
       }
     },
