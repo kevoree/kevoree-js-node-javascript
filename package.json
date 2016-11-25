@@ -6,7 +6,7 @@
     "namespace": "kevoree"
   },
   "scripts": {
-    "prepublish": "grunt",
+    "prepublish": "eslint lib browser.js test && grunt",
     "postpublish": "grunt publish"
   },
   "description": "Kevoree JS standard node platform",
@@ -17,7 +17,6 @@
     "node"
   ],
   "author": "Maxime Tricoire <max.tricoire@gmail.com>",
-  "contributors": [],
   "bugs": {
     "url": "https://github.com/kevoree/kevoree-js-node-javascript/issues"
   },
@@ -27,13 +26,13 @@
     "url": "https://github.com/kevoree/kevoree-js-node-javascript"
   },
   "dependencies": {
-    "async": "^1.5.2",
     "kevoree-commons": "next",
     "kevoree-entities": "^9.0.0-alpha.0",
     "kevoree-library": "^5.0.10-alpha.1",
     "times-up": "^1.0.1"
   },
   "devDependencies": {
+    "eslint": "^3.10.2",
     "expect": "^1.20.2",
     "grunt": "^1.0.1",
     "grunt-kevoree": "^5.9.0-alpha.2",
@@ -49,5 +48,11 @@
   "optionalDependencies": {},
   "engines": {
     "node": "*"
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true
+    },
+    "extends": ["eslint:recommended"]
   }
 }
