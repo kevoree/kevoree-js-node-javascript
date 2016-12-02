@@ -19,8 +19,8 @@ module.exports = function (grunt) {
     kevoree: {
       main: {
         options: {
-          runtime: 'next',
-          skipIntegrityCheck: true
+          useGlobalRuntime: true
+          // skipIntegrityCheck: true
         }
       }
     },
