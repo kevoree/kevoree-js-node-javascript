@@ -1,6 +1,6 @@
 {
   "name": "kevoree-node-javascript",
-  "version": "5.4.0-beta",
+  "version": "5.4.0-beta.0",
   "main": "./lib/JavascriptNode.js",
   "kevoree": {
     "namespace": "kevoree"
@@ -35,13 +35,13 @@
     "eslint": "^3.11.1",
     "expect": "^1.20.2",
     "grunt": "^1.0.1",
-    "grunt-kevoree": "^5.9.1",
+    "grunt-kevoree": "^5.9.3",
     "grunt-kevoree-genmodel": "^3.0.1",
     "grunt-kevoree-registry": "^3.0.3",
     "grunt-webpack": "^1.0.18",
     "json-loader": "^0.5.4",
     "mocha": "^3.2.0",
-    "webpack": "^1.13.3",
+    "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2",
     "wrapper-webpack-plugin": "^0.1.11"
   },
