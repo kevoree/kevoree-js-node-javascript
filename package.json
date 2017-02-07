@@ -1,6 +1,6 @@
 {
   "name": "kevoree-node-javascript",
-  "version": "5.4.0-beta.3",
+  "version": "5.4.0-beta.4",
   "main": "./lib/JavascriptNode.js",
   "kevoree": {
     "namespace": "kevoree"
@@ -27,22 +27,23 @@
   },
   "dependencies": {
     "kevoree-commons": "^3.0.0",
-    "kevoree-entities": "^9.0.0",
+    "kevoree-entities": "^9.0.2",
     "kevoree-library": "^5.0.10",
     "times-up": "^1.0.1"
   },
   "devDependencies": {
-    "eslint": "^3.11.1",
+    "eslint": "^3.15.0",
     "expect": "^1.20.2",
     "grunt": "^1.0.1",
-    "grunt-kevoree": "^5.9.3",
+    "grunt-kevoree": "^5.9.8",
     "grunt-kevoree-genmodel": "^3.0.1",
     "grunt-kevoree-registry": "^3.0.3",
-    "grunt-webpack": "^1.0.18",
+    "grunt-webpack": "^2.0.1",
     "json-loader": "^0.5.4",
+    "load-grunt-tasks": "^3.5.2",
     "mocha": "^3.2.0",
-    "webpack": "^1.14.0",
-    "webpack-dev-server": "^1.16.2",
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.3.0",
     "wrapper-webpack-plugin": "^0.1.11"
   },
   "optionalDependencies": {},
@@ -50,12 +51,15 @@
     "node": "*"
   },
   "eslintConfig": {
-		"root": true,
+    "root": true,
     "env": {
       "node": true
     },
     "extends": [
       "eslint:recommended"
-    ]
+    ],
+		"rules": {
+			"no-shadow": 2
+		}
   }
 }

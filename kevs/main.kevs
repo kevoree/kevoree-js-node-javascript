@@ -1,7 +1,7 @@
 add node0, node1: JavascriptNode/1/LATEST
 // add node0.ticker: Ticker/1/LATEST
 // add node1.printer: ConsolePrinter/1/LATEST
-add sync: WSGroup/1/LATEST
+add sync: CentralizedWSGroup/1/LATEST
 // add chan: LocalChannel/1/LATEST
 //
 attach node0, node1 sync
@@ -10,7 +10,7 @@ attach node0, node1 sync
 // bind node1.printer.input chan
 //
 set node0.logLevel = 'DEBUG'
-set sync.master = 'node0'
+set sync.isMaster/node0 = 'true'
 // //set chan.host = 'ws.kevoree.org'
 // //set chan.uuid = 'yoloswag'
 //
