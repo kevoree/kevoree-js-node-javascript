@@ -1,17 +1,17 @@
-add node0, node1: JavascriptNode/1/LATEST
-// add node0.ticker: Ticker/1/LATEST
-// add node1.printer: ConsolePrinter/1/LATEST
+add node0, node1, node2: JavascriptNode/LATEST/LATEST
 add sync: CentralizedWSGroup/1/LATEST
-// add chan: LocalChannel/1/LATEST
-//
-attach node0, node1 sync
-//
-// bind node0.ticker.tick chan
-// bind node1.printer.input chan
-//
+add node1.printer: ConsolePrinter/LATEST/LATEST
+add node2.printer: ConsolePrinter/LATEST/LATEST
+add chan: RemoteWSChan/LATEST/LATEST
+
+attach * sync
+
+bind node1.printer.input chan
+bind node2.printer.input chan
+
 set node0.logLevel = 'DEBUG'
+
 set sync.isMaster/node0 = 'true'
-// //set chan.host = 'ws.kevoree.org'
-// //set chan.uuid = 'yoloswag'
-//
-// network node0.ip.lan 127.0.0.1
+
+set chan.host = 'ws.kevoree.org'
+set chan.uuid = 'yoloswag'
