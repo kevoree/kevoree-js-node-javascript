@@ -1,6 +1,6 @@
 {
   "name": "kevoree-node-javascript",
-  "version": "5.4.0-beta.6",
+  "version": "5.4.0-beta.7",
   "main": "./lib/JavascriptNode.js",
   "kevoree": {
     "namespace": "kevoree"
