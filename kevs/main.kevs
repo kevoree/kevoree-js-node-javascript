@@ -1,13 +1,14 @@
-add node0, node1, node2: JavascriptNode/LATEST/LATEST
+add node0, node1: JavascriptNode/LATEST/LATEST
 add sync: CentralizedWSGroup/1/LATEST
+add node0.ticker: Ticker/LATEST/LATEST
+add node0.printer: ConsolePrinter/LATEST/LATEST
 add node1.printer: ConsolePrinter/LATEST/LATEST
-add node2.printer: ConsolePrinter/LATEST/LATEST
 add chan: RemoteWSChan/LATEST/LATEST
 
 attach * sync
 
-bind node1.printer.input chan
-bind node2.printer.input chan
+bind node0.ticker.tick chan
+bind *.printer.input chan
 
 set node0.logLevel = 'DEBUG'
 
