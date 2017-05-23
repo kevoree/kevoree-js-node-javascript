@@ -1,6 +1,6 @@
 {
   "name": "kevoree-node-javascript",
-  "version": "5.5.0-alpha",
+  "version": "5.5.0-alpha.0",
   "main": "./lib/JavascriptNode.js",
   "kevoree": {
     "namespace": "kevoree"
@@ -38,7 +38,7 @@
     "grunt": "^1.0.1",
     "grunt-kevoree": "^6.0.0-alpha",
     "grunt-kevoree-genmodel": "^3.0.1",
-    "grunt-kevoree-registry": "^3.0.3",
+    "grunt-kevoree-registry": "^4.0.0-alpha",
     "grunt-webpack": "^2.0.1",
     "json-loader": "^0.5.4",
     "load-grunt-tasks": "^3.5.2",
