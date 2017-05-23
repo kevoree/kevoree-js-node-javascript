@@ -1,6 +1,6 @@
 {
   "name": "kevoree-node-javascript",
-  "version": "5.5.0-alpha.1",
+  "version": "5.5.0-alpha.2",
   "main": "./lib/JavascriptNode.js",
   "kevoree": {
     "namespace": "kevoree"
@@ -28,7 +28,6 @@
   "dependencies": {
     "kevoree-commons": "^3.0.0",
     "kevoree-entities": "^9.2.0",
-    "kevoree-kevscript": "4.1.3",
     "kevoree-library": "^5.0.10",
     "times-up": "^1.0.1"
   },
