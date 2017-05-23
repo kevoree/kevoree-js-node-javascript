@@ -1,5 +1,5 @@
 add node0, node1: JavascriptNode/LATEST/LATEST
-add sync: CentralizedWSGroup/1/LATEST
+add sync: CentralizedWSGroup/LATEST/LATEST
 add node0.ticker: Ticker/LATEST/LATEST
 add node0.printer: ConsolePrinter/LATEST/LATEST
 add node1.printer: ConsolePrinter/LATEST/LATEST
